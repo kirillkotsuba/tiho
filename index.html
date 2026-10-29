@@ -1,0 +1,1008 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тихо — студия массажа</title>
+<meta name="description" content="Студия массажа «Тихо»: классический, лечебный, спортивный, лимфодренажный массаж и SPA-ритуалы. Онлайн-запись и подарочные сертификаты.">
+<meta name="theme-color" content="#f3ede4">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sand: #f3ede4;
+    --sand-2: #ebe2d5;
+    --paper: #faf7f2;
+    --ink: #2a2620;
+    --ink-2: #4a443b;
+    --muted: #857b6e;
+    --clay: #a8694c;
+    --clay-2: #8f5639;
+    --sage: #7c8a6c;
+    --line: rgba(42,38,32,.12);
+    --radius: 22px;
+    --ease: cubic-bezier(.22,.8,.24,1);
+    --serif: "Cormorant Garamond", Georgia, serif;
+    --sans: Manrope, -apple-system, "Segoe UI", Arial, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body { background: var(--sand); color: var(--ink); font: 16px/1.65 var(--sans); overflow-x: hidden; }
+  body.lock { overflow: hidden; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; }
+  img, svg { display: block; }
+  ::selection { background: var(--clay); color: #fff; }
+  :focus-visible { outline: 2px solid var(--clay); outline-offset: 3px; border-radius: 6px; }
+
+  /* лёгкое «зерно», как на дорогой бумаге */
+  body::after {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 100; opacity: .07; mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 28px; }
+  .serif { font-family: var(--serif); font-weight: 500; letter-spacing: -.01em; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .eyebrow::before { content: ""; width: 28px; height: 1px; background: currentColor; }
+  h2.title { font-family: var(--serif); font-weight: 500; font-size: clamp(40px, 5.6vw, 76px); line-height: 1; letter-spacing: -.02em; margin: 18px 0 0; }
+  h2.title em { font-style: italic; color: var(--clay); }
+  .lead { color: var(--ink-2); font-size: 18px; max-width: 520px; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; height: 56px; padding: 0 30px; border-radius: 999px; font-weight: 600; font-size: 15px; letter-spacing: .01em; transition: transform .4s var(--ease), background .3s, color .3s, box-shadow .4s var(--ease); white-space: nowrap; }
+  .btn-dark { background: var(--ink); color: var(--paper); }
+  .btn-dark:hover { background: var(--clay-2); transform: translateY(-2px); box-shadow: 0 14px 30px -12px rgba(143,86,57,.6); }
+  .btn-line { border: 1px solid var(--ink); }
+  .btn-line:hover { background: var(--ink); color: var(--paper); }
+  .btn .arr { transition: transform .4s var(--ease); }
+  .btn:hover .arr { transform: translateX(4px); }
+  .btn-sm { height: 44px; padding: 0 22px; font-size: 14px; }
+
+  /* появление при прокрутке */
+  .rv { opacity: 0; transform: translateY(28px); transition: opacity 1s var(--ease), transform 1s var(--ease); }
+  .rv.in { opacity: 1; transform: none; }
+  .d1 { transition-delay: .1s; } .d2 { transition-delay: .2s; } .d3 { transition-delay: .3s; } .d4 { transition-delay: .4s; }
+
+  /* ---------- Шапка ---------- */
+  .progress { position: fixed; top: 0; left: 0; height: 2px; background: var(--clay); z-index: 60; width: 0; }
+  header.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 50; transition: background .4s, box-shadow .4s, padding .4s; padding: 22px 0; }
+  header.nav.scrolled { background: rgba(243,237,228,.82); backdrop-filter: blur(14px) saturate(1.4); -webkit-backdrop-filter: blur(14px) saturate(1.4); box-shadow: 0 1px 0 var(--line); padding: 12px 0; }
+  .nav .wrap { display: flex; align-items: center; gap: 36px; }
+  .logo { font-family: var(--serif); font-size: 34px; font-weight: 500; line-height: 1; letter-spacing: -.02em; display: flex; align-items: center; gap: 10px; }
+  .logo-mark { width: 30px; height: 30px; }
+  .menu { display: flex; gap: 30px; font-size: 14px; font-weight: 500; color: var(--ink-2); }
+  .menu a { position: relative; padding: 4px 0; }
+  .menu a::after { content: ""; position: absolute; left: 0; right: 100%; bottom: 0; height: 1px; background: currentColor; transition: right .4s var(--ease); }
+  .menu a:hover::after { right: 0; }
+  .nav-right { margin-left: auto; display: flex; align-items: center; gap: 22px; }
+  .nav-phone { font-weight: 600; font-size: 14px; }
+  .burger { display: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); position: relative; }
+  .burger span { position: absolute; left: 13px; right: 13px; height: 1.5px; background: var(--ink); transition: transform .4s var(--ease), top .4s var(--ease); }
+  .burger span:nth-child(1) { top: 18px; } .burger span:nth-child(2) { top: 25px; }
+  .menu-open .burger span:nth-child(1) { top: 21px; transform: rotate(45deg); }
+  .menu-open .burger span:nth-child(2) { top: 21px; transform: rotate(-45deg); }
+  .mobile-menu { position: fixed; inset: 0; z-index: 45; background: var(--sand); display: flex; flex-direction: column; justify-content: center; padding: 0 28px; gap: 6px; clip-path: circle(0 at calc(100% - 50px) 44px); transition: clip-path .7s var(--ease); }
+  .menu-open .mobile-menu { clip-path: circle(150% at calc(100% - 50px) 44px); }
+  .mobile-menu a { font-family: var(--serif); font-size: 46px; line-height: 1.2; }
+  .mobile-menu .btn { margin-top: 26px; align-self: flex-start; }
+
+  /* ---------- Первый экран ---------- */
+  .hero { position: relative; min-height: 100vh; min-height: 100svh; display: flex; align-items: center; padding: 130px 0 70px; overflow: hidden; }
+  .hero .wrap { display: grid; grid-template-columns: 1.05fr .95fr; gap: 40px; align-items: center; width: 100%; }
+  .hero h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(56px, 8.4vw, 132px); line-height: .92; letter-spacing: -.035em; margin: 26px 0 30px; }
+  .hero h1 em { font-style: italic; color: var(--clay); }
+  .hero h1 .ln { display: block; overflow: hidden; }
+  .hero h1 .ln > span { display: inline-block; transform: translateY(105%); animation: up 1.2s var(--ease) forwards; }
+  .hero h1 .ln:nth-child(2) > span { animation-delay: .12s; }
+  .hero h1 .ln:nth-child(3) > span { animation-delay: .24s; }
+  @keyframes up { to { transform: none; } }
+  .fade-in { opacity: 0; animation: fade 1.2s .5s var(--ease) forwards; }
+  @keyframes fade { to { opacity: 1; } }
+  .hero .actions { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 38px; }
+  .hero-stats { display: flex; gap: 46px; margin-top: 64px; padding-top: 28px; border-top: 1px solid var(--line); max-width: 560px; }
+  .hero-stats b { display: block; font-family: var(--serif); font-size: 44px; font-weight: 500; line-height: 1; }
+  .hero-stats span { font-size: 13px; color: var(--muted); }
+
+  .art { position: relative; aspect-ratio: 1 / 1.08; max-width: 560px; justify-self: end; width: 100%; }
+  .art .arch { position: absolute; inset: 0; border-radius: 999px 999px 28px 28px; overflow: hidden; background: linear-gradient(170deg, #e6d7c3 0%, #d9c3a7 55%, #c9a985 100%); box-shadow: inset 0 0 0 1px rgba(255,255,255,.35), 0 40px 80px -40px rgba(80,55,30,.45); }
+  .blob { position: absolute; border-radius: 50%; filter: blur(40px); opacity: .75; animation: drift 14s ease-in-out infinite alternate; }
+  .blob.b1 { width: 70%; height: 55%; left: -10%; top: 4%; background: #f6e9d6; }
+  .blob.b2 { width: 60%; height: 50%; right: -15%; top: 30%; background: #b77a58; opacity: .45; animation-duration: 18s; }
+  .blob.b3 { width: 55%; height: 40%; left: 10%; bottom: -8%; background: #8e9a7c; opacity: .4; animation-duration: 16s; }
+  @keyframes drift { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(6%, -5%) scale(1.12); } }
+  .stones { position: absolute; left: 50%; bottom: 9%; width: 62%; transform: translateX(-50%); filter: drop-shadow(0 30px 30px rgba(60,40,20,.25)); }
+  .stones .st { animation: breathe 7s ease-in-out infinite; transform-origin: center bottom; transform-box: fill-box; }
+  .stones .st:nth-child(2) { animation-delay: .3s; } .stones .st:nth-child(3) { animation-delay: .6s; } .stones .st:nth-child(4) { animation-delay: .9s; }
+  @keyframes breathe { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+  .sprig { position: absolute; right: 14%; top: 16%; width: 30%; opacity: .85; animation: sway 9s ease-in-out infinite alternate; transform-origin: bottom left; }
+  @keyframes sway { from { transform: rotate(-3deg); } to { transform: rotate(4deg); } }
+  .badge-round { position: absolute; left: -46px; bottom: 16%; width: 150px; height: 150px; border-radius: 50%; background: var(--paper); display: grid; place-items: center; box-shadow: 0 20px 50px -20px rgba(60,40,20,.35); }
+  .badge-round svg.ring { position: absolute; inset: 0; width: 100%; height: 100%; animation: spin 26s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .badge-round .yr { font-family: var(--serif); font-size: 32px; line-height: 1; text-align: center; }
+  .badge-round .yr small { display: block; font-family: var(--sans); font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+  .rating-chip { position: absolute; right: -18px; top: 12%; background: rgba(250,247,242,.9); backdrop-filter: blur(8px); padding: 14px 18px; border-radius: 18px; box-shadow: 0 20px 50px -20px rgba(60,40,20,.35); display: flex; align-items: center; gap: 12px; }
+  .rating-chip b { font-family: var(--serif); font-size: 34px; line-height: 1; }
+  .rating-chip small { display: block; font-size: 12px; color: var(--muted); line-height: 1.35; }
+  .stars { color: var(--clay); letter-spacing: 2px; font-size: 12px; }
+
+  /* ---------- Бегущая строка ---------- */
+  .marquee { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); overflow: hidden; padding: 26px 0; background: var(--paper); }
+  .marquee-track { display: flex; width: max-content; animation: marq 40s linear infinite; }
+  .marquee span { font-family: var(--serif); font-size: clamp(28px, 3.4vw, 46px); font-style: italic; padding: 0 28px; white-space: nowrap; display: flex; align-items: center; gap: 56px; }
+  .marquee span::after { content: "✦"; font-style: normal; font-size: .5em; color: var(--clay); }
+  @keyframes marq { to { transform: translateX(-50%); } }
+
+  section { position: relative; }
+  .sec { padding: 140px 0; }
+
+  /* ---------- Философия ---------- */
+  .about-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 80px; align-items: end; }
+  .principles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin-top: 90px; border-top: 1px solid var(--line); }
+  .pr { padding: 36px 36px 0 0; }
+  .pr + .pr { padding-left: 36px; border-left: 1px solid var(--line); }
+  .pr .num { font-family: var(--serif); font-size: 18px; color: var(--clay); font-style: italic; }
+  .pr h3 { font-family: var(--serif); font-weight: 500; font-size: 32px; line-height: 1.1; margin: 14px 0 12px; }
+  .pr p { color: var(--ink-2); font-size: 15px; }
+
+  /* ---------- Услуги ---------- */
+  .services { background: var(--paper); border-radius: 48px 48px 0 0; }
+  .sv-head { display: flex; justify-content: space-between; align-items: end; gap: 40px; flex-wrap: wrap; margin-bottom: 56px; }
+  .tabs { display: inline-flex; gap: 6px; padding: 6px; border-radius: 999px; background: var(--sand); flex-wrap: wrap; }
+  .tab { height: 44px; padding: 0 20px; border-radius: 999px; font-size: 14px; font-weight: 600; color: var(--ink-2); transition: background .3s, color .3s; }
+  .tab.on { background: var(--ink); color: var(--paper); }
+  .sv-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .sv { position: relative; background: var(--sand); border-radius: var(--radius); padding: 34px 30px 30px; display: flex; flex-direction: column; min-height: 400px; overflow: hidden; transition: transform .6s var(--ease), box-shadow .6s var(--ease); animation: cardIn .7s var(--ease) backwards; }
+  .sv:nth-child(2) { animation-delay: .07s; } .sv:nth-child(3) { animation-delay: .14s; }
+  @keyframes cardIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+  .sv:hover { transform: translateY(-6px); box-shadow: 0 30px 60px -30px rgba(60,40,20,.35); }
+  .sv .ico { width: 54px; height: 54px; border-radius: 50%; background: var(--paper); display: grid; place-items: center; color: var(--clay); }
+  .sv h3 { font-family: var(--serif); font-weight: 500; font-size: 34px; line-height: 1.05; margin: 26px 0 12px; }
+  .sv p { color: var(--ink-2); font-size: 15px; }
+  .sv .opts { display: flex; gap: 6px; margin: 26px 0 18px; flex-wrap: wrap; }
+  .opt { height: 34px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); font-size: 13px; font-weight: 600; color: var(--ink-2); transition: all .3s; }
+  .opt.on { border-color: var(--ink); background: var(--ink); color: var(--paper); }
+  .sv .bottom { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 20px; border-top: 1px solid var(--line); }
+  .sv .price { font-family: var(--serif); font-size: 38px; line-height: 1; }
+  .sv .price small { font-family: var(--sans); font-size: 13px; color: var(--muted); margin-left: 4px; }
+  .round-btn { width: 52px; height: 52px; border-radius: 50%; background: var(--ink); color: var(--paper); display: grid; place-items: center; transition: transform .5s var(--ease), background .3s; flex: none; }
+  .sv:hover .round-btn { background: var(--clay); transform: rotate(-45deg); }
+  .sv .tag { position: absolute; top: 30px; right: 26px; font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--clay); }
+
+  /* ---------- Подбор ---------- */
+  .quiz-wrap { background: var(--ink); color: var(--sand); border-radius: 40px; padding: 80px; display: grid; grid-template-columns: .9fr 1.1fr; gap: 70px; position: relative; overflow: hidden; }
+  .quiz-wrap::before { content: ""; position: absolute; width: 520px; height: 520px; border-radius: 50%; right: -160px; top: -200px; background: radial-gradient(circle, rgba(168,105,76,.55), transparent 65%); filter: blur(10px); }
+  .quiz-wrap .eyebrow { color: rgba(243,237,228,.6); }
+  .quiz-wrap h2.title em { color: #d9a283; }
+  .quiz-wrap .lead { color: rgba(243,237,228,.75); margin-top: 22px; }
+  .quiz { position: relative; z-index: 1; }
+  .q-steps { display: flex; gap: 6px; margin-bottom: 30px; }
+  .q-steps i { flex: 1; height: 3px; border-radius: 3px; background: rgba(243,237,228,.18); transition: background .5s; }
+  .q-steps i.on { background: #d9a283; }
+  .q-title { font-family: var(--serif); font-size: 36px; line-height: 1.1; margin-bottom: 24px; }
+  .q-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .q-opt { text-align: left; padding: 20px 22px; border-radius: 18px; border: 1px solid rgba(243,237,228,.18); color: var(--sand); transition: all .35s var(--ease); display: flex; justify-content: space-between; align-items: center; gap: 12px; font-weight: 500; }
+  .q-opt:hover { background: rgba(243,237,228,.08); border-color: rgba(243,237,228,.4); transform: translateY(-2px); }
+  .q-opt .k { width: 26px; height: 26px; border-radius: 50%; border: 1px solid rgba(243,237,228,.3); display: grid; place-items: center; font-size: 12px; flex: none; }
+  .q-anim { animation: qin .6s var(--ease); }
+  @keyframes qin { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+  .q-result { background: var(--sand); color: var(--ink); border-radius: 26px; padding: 34px; }
+  .q-result .eyebrow { color: var(--muted); }
+  .q-result h3 { font-family: var(--serif); font-weight: 500; font-size: 44px; line-height: 1; margin: 14px 0 12px; }
+  .q-result p { color: var(--ink-2); }
+  .q-result .row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; align-items: center; }
+  .q-result .gift { margin-top: 18px; padding: 12px 16px; border-radius: 14px; background: var(--sand-2); font-size: 14px; }
+  .q-back { margin-top: 18px; font-size: 14px; color: rgba(243,237,228,.6); text-decoration: underline; text-underline-offset: 4px; }
+
+  /* ---------- Визит ---------- */
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; margin-top: 70px; counter-reset: s; }
+  .step { position: relative; padding-top: 36px; }
+  .step::before { content: ""; position: absolute; top: 0; left: 0; right: -22px; height: 1px; background: var(--line); }
+  .step:last-child::before { right: 0; }
+  .step::after { content: ""; position: absolute; top: -5px; left: 0; width: 11px; height: 11px; border-radius: 50%; background: var(--clay); box-shadow: 0 0 0 6px var(--sand); }
+  .step .t { font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .step h3 { font-family: var(--serif); font-weight: 500; font-size: 30px; line-height: 1.1; margin: 10px 0 10px; }
+  .step p { color: var(--ink-2); font-size: 15px; }
+
+  /* ---------- Мастера ---------- */
+  .team { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; margin-top: 64px; }
+  .m { cursor: default; }
+  .m .ph { position: relative; aspect-ratio: 3/4; border-radius: 200px 200px var(--radius) var(--radius); overflow: hidden; display: grid; place-items: center; }
+  .m .ph::after { content: ""; position: absolute; inset: 0; background: linear-gradient(transparent 55%, rgba(42,38,32,.35)); opacity: 0; transition: opacity .6s; }
+  .m:hover .ph::after { opacity: 1; }
+  .m .ph .mono { font-family: var(--serif); font-size: 120px; font-style: italic; color: rgba(255,255,255,.85); line-height: 1; transition: transform 1s var(--ease); }
+  .m:hover .mono { transform: scale(1.08); }
+  .m .ph .exp { position: absolute; left: 16px; bottom: 16px; z-index: 1; background: rgba(250,247,242,.92); padding: 6px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+  .m h3 { font-family: var(--serif); font-weight: 500; font-size: 28px; margin-top: 18px; line-height: 1.1; }
+  .m p { color: var(--muted); font-size: 14px; margin-top: 4px; }
+
+  /* ---------- Сертификат ---------- */
+  .gift-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .card3d { perspective: 1200px; }
+  .gcard { aspect-ratio: 1.6/1; border-radius: 26px; padding: 34px; position: relative; overflow: hidden; color: var(--paper); background: linear-gradient(135deg, #3a332a 0%, #2a2620 45%, #5a3d2c 100%); box-shadow: 0 50px 90px -40px rgba(42,38,32,.7); transform-style: preserve-3d; transition: transform .25s ease-out; display: flex; flex-direction: column; justify-content: space-between; }
+  .gcard::before { content: ""; position: absolute; width: 380px; height: 380px; border-radius: 50%; border: 1px solid rgba(217,162,131,.35); right: -120px; top: -160px; }
+  .gcard::after { content: ""; position: absolute; width: 260px; height: 260px; border-radius: 50%; border: 1px solid rgba(217,162,131,.25); right: -60px; top: -100px; }
+  .gcard .shine { position: absolute; inset: 0; background: radial-gradient(circle at var(--mx,30%) var(--my,20%), rgba(255,255,255,.18), transparent 45%); pointer-events: none; }
+  .gcard .top { display: flex; justify-content: space-between; align-items: start; position: relative; z-index: 1; }
+  .gcard .lg { font-family: var(--serif); font-size: 38px; line-height: 1; }
+  .gcard .lb { font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: #d9a283; }
+  .gcard .amount { font-family: var(--serif); font-size: clamp(48px, 6vw, 76px); line-height: 1; position: relative; z-index: 1; }
+  .gcard .amount small { font-size: .45em; margin-left: 6px; }
+  .gcard .foot { display: flex; justify-content: space-between; font-size: 12px; color: rgba(243,237,228,.6); position: relative; z-index: 1; letter-spacing: .08em; }
+  .amounts { display: flex; gap: 10px; flex-wrap: wrap; margin: 34px 0 30px; }
+  .amt { height: 52px; padding: 0 22px; border-radius: 999px; border: 1px solid var(--line); font-weight: 600; transition: all .3s; }
+  .amt.on, .amt:hover { border-color: var(--ink); }
+  .amt.on { background: var(--ink); color: var(--paper); }
+  .ticks { list-style: none; margin-bottom: 34px; display: grid; gap: 10px; }
+  .ticks li { display: flex; gap: 12px; color: var(--ink-2); }
+  .ticks li::before { content: ""; width: 18px; height: 18px; border-radius: 50%; flex: none; margin-top: 4px; background: var(--clay) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.5l2.5 2.5L12 5.5' fill='none' stroke='white' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat; }
+
+  /* ---------- Отзывы ---------- */
+  .reviews { background: var(--paper); }
+  .rv-top { display: flex; justify-content: space-between; align-items: end; gap: 30px; flex-wrap: wrap; }
+  .scores { display: flex; gap: 34px; }
+  .score b { font-family: var(--serif); font-size: 54px; line-height: 1; font-weight: 500; }
+  .score span { display: block; font-size: 13px; color: var(--muted); }
+  .slider { margin-top: 64px; position: relative; }
+  .slides { display: flex; gap: 22px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding-bottom: 6px; }
+  .slides::-webkit-scrollbar { display: none; }
+  .quote { flex: 0 0 calc((100% - 44px) / 3); scroll-snap-align: start; background: var(--sand); border-radius: var(--radius); padding: 36px 32px; display: flex; flex-direction: column; min-height: 340px; }
+  .quote .mark { font-family: var(--serif); font-size: 80px; line-height: .6; color: var(--clay); height: 34px; }
+  .quote p { font-family: var(--serif); font-size: 24px; line-height: 1.3; margin: 20px 0 28px; }
+  .quote .who { margin-top: auto; display: flex; align-items: center; gap: 14px; }
+  .quote .av { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; color: var(--paper); font-size: 15px; }
+  .quote .who b { display: block; font-size: 15px; }
+  .quote .who small { color: var(--muted); font-size: 13px; }
+  .arrows { display: flex; gap: 10px; }
+  .arrow { width: 56px; height: 56px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; transition: all .3s; }
+  .arrow:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+  /* ---------- FAQ ---------- */
+  .faq-grid { display: grid; grid-template-columns: .8fr 1.2fr; gap: 80px; }
+  details { border-bottom: 1px solid var(--line); }
+  details:first-child { border-top: 1px solid var(--line); }
+  summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 28px 0; font-family: var(--serif); font-size: 28px; line-height: 1.15; }
+  summary::-webkit-details-marker { display: none; }
+  summary .pm { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); flex: none; position: relative; transition: transform .5s var(--ease), background .3s; }
+  summary .pm::before, summary .pm::after { content: ""; position: absolute; left: 50%; top: 50%; width: 14px; height: 1.5px; background: var(--ink); transform: translate(-50%,-50%); }
+  summary .pm::after { transform: translate(-50%,-50%) rotate(90deg); }
+  details[open] summary .pm { transform: rotate(45deg); background: var(--sand-2); }
+  details .ans { color: var(--ink-2); padding: 0 60px 28px 0; max-width: 680px; }
+
+  /* ---------- Контакты ---------- */
+  .cta { background: var(--ink); color: var(--sand); border-radius: 48px 48px 0 0; padding: 140px 0 60px; overflow: hidden; position: relative; }
+  .cta::before { content: ""; position: absolute; width: 700px; height: 700px; border-radius: 50%; left: 50%; top: -420px; transform: translateX(-50%); background: radial-gradient(circle, rgba(168,105,76,.5), transparent 65%); }
+  .cta .big { position: relative; font-family: var(--serif); font-weight: 400; font-size: clamp(56px, 10vw, 160px); line-height: .9; letter-spacing: -.04em; text-align: center; }
+  .cta .big em { color: #d9a283; }
+  .cta .center { text-align: center; position: relative; margin-top: 44px; }
+  .cta .btn-light { background: var(--sand); color: var(--ink); }
+  .cta .btn-light:hover { background: #d9a283; transform: translateY(-2px); }
+  .contacts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; margin-top: 120px; padding-top: 50px; border-top: 1px solid rgba(243,237,228,.15); position: relative; }
+  .contacts .lb { font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: rgba(243,237,228,.5); font-weight: 600; margin-bottom: 10px; }
+  .contacts .v { font-size: 18px; line-height: 1.5; }
+  .contacts a.v:hover { color: #d9a283; }
+  .foot { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-top: 80px; font-size: 13px; color: rgba(243,237,228,.45); position: relative; }
+  .foot .logo { color: var(--sand); font-size: 26px; }
+
+  /* ---------- Окно записи ---------- */
+  .modal { position: fixed; inset: 0; z-index: 80; display: none; }
+  .modal.open { display: block; }
+  .modal .bg { position: absolute; inset: 0; background: rgba(42,38,32,.5); backdrop-filter: blur(6px); animation: fade .4s forwards; opacity: 0; }
+  .sheet { position: absolute; right: 0; top: 0; bottom: 0; width: min(560px, 100%); background: var(--paper); padding: 34px 40px; overflow-y: auto; animation: slideIn .6s var(--ease); display: flex; flex-direction: column; }
+  @keyframes slideIn { from { transform: translateX(100%); } to { transform: none; } }
+  .sheet-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 26px; }
+  .close { width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; transition: transform .4s var(--ease); }
+  .close:hover { transform: rotate(90deg); }
+  .bk-steps { display: flex; gap: 6px; margin-bottom: 30px; }
+  .bk-steps i { flex: 1; height: 3px; border-radius: 3px; background: var(--sand-2); transition: background .4s; }
+  .bk-steps i.on { background: var(--clay); }
+  .bk-title { font-family: var(--serif); font-size: 40px; line-height: 1.05; margin-bottom: 8px; font-weight: 500; }
+  .bk-sub { color: var(--muted); margin-bottom: 24px; font-size: 15px; }
+  .pick { display: grid; gap: 10px; }
+  .pick button { text-align: left; padding: 16px 18px; border-radius: 16px; border: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: 12px; transition: all .3s; }
+  .pick button:hover { border-color: var(--ink); }
+  .pick button.on { border-color: var(--ink); background: var(--sand); box-shadow: inset 0 0 0 1px var(--ink); }
+  .pick b { font-weight: 600; display: block; }
+  .pick small { color: var(--muted); font-size: 13px; }
+  .pick .pr2 { font-family: var(--serif); font-size: 24px; white-space: nowrap; }
+  .grp { font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin: 16px 0 2px; }
+  .days { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .days button, .times button { border: 1px solid var(--line); border-radius: 14px; padding: 10px 4px; text-align: center; transition: all .3s; }
+  .days button small { display: block; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+  .days button b { font-family: var(--serif); font-size: 26px; font-weight: 500; line-height: 1.1; }
+  .times { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 22px; }
+  .times button { padding: 12px 4px; font-weight: 600; font-size: 14px; }
+  .days button:hover, .times button:hover:not(:disabled) { border-color: var(--ink); }
+  .days button.on, .times button.on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .days button.on small { color: rgba(243,237,228,.6); }
+  .times button:disabled { opacity: .35; text-decoration: line-through; cursor: not-allowed; }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; font-weight: 500; }
+  .field input, .field textarea { width: 100%; font: inherit; padding: 15px 18px; border-radius: 14px; border: 1px solid var(--line); background: #fff; color: var(--ink); transition: border-color .3s; }
+  .field input:focus, .field textarea:focus { outline: none; border-color: var(--ink); }
+  .summary { background: var(--sand); border-radius: 18px; padding: 18px 20px; margin-bottom: 20px; font-size: 14px; display: grid; gap: 6px; }
+  .summary div { display: flex; justify-content: space-between; gap: 12px; }
+  .summary span { color: var(--muted); }
+  .sheet-foot { margin-top: auto; padding-top: 26px; display: flex; gap: 10px; }
+  .sheet-foot .btn { flex: 1; }
+  .sheet-foot .btn[disabled] { opacity: .35; pointer-events: none; }
+  .done { text-align: center; padding-top: 40px; }
+  .done .ok { width: 96px; height: 96px; border-radius: 50%; background: var(--sage); color: #fff; display: grid; place-items: center; margin: 0 auto 28px; animation: pop .7s var(--ease); }
+  @keyframes pop { from { transform: scale(.4); opacity: 0; } to { transform: none; opacity: 1; } }
+  .done .ok path { stroke-dasharray: 40; stroke-dashoffset: 40; animation: draw .6s .35s forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .note-small { font-size: 12px; color: var(--muted); margin-top: 10px; }
+
+  /* ---------- Адаптив ---------- */
+  @media (max-width: 1080px) {
+    .menu, .nav-phone { display: none; }
+    .burger { display: block; }
+    .hero .wrap, .about-grid, .gift-grid, .faq-grid, .quiz-wrap { grid-template-columns: 1fr; }
+    .art { justify-self: center; max-width: 480px; margin-top: 30px; }
+    .sv-grid { grid-template-columns: 1fr 1fr; }
+    .team { grid-template-columns: 1fr 1fr; }
+    .steps { grid-template-columns: 1fr 1fr; row-gap: 50px; }
+    .step::before { right: 0; }
+    .quote { flex-basis: calc((100% - 22px) / 2); }
+    .contacts { grid-template-columns: 1fr 1fr; }
+    .quiz-wrap { padding: 56px 40px; gap: 40px; }
+    .about-grid, .gift-grid, .faq-grid { gap: 50px; }
+  }
+  @media (max-width: 680px) {
+    .wrap { padding: 0 16px; }
+    .sec { padding: 90px 0; }
+    .nav .btn { display: none; }
+    .hero { padding-top: 110px; }
+    .hero h1 { font-size: clamp(50px, 15vw, 70px); }
+    .hero-stats { gap: 22px; margin-top: 44px; }
+    .hero-stats b { font-size: 34px; }
+    .hero .actions .btn { flex: 1; }
+    .badge-round { left: -6px; width: 112px; height: 112px; }
+    .badge-round .yr { font-size: 24px; }
+    .rating-chip { right: -4px; padding: 10px 14px; }
+    .rating-chip b { font-size: 26px; }
+    .principles { grid-template-columns: 1fr; margin-top: 50px; }
+    .pr, .pr + .pr { padding: 28px 0; border-left: 0; border-bottom: 1px solid var(--line); }
+    .services, .cta { border-radius: 30px 30px 0 0; }
+    .sv-grid, .team, .steps { grid-template-columns: 1fr; }
+    .team { grid-template-columns: 1fr 1fr; gap: 14px; }
+    .m .ph .mono { font-size: 72px; }
+    .m h3 { font-size: 22px; }
+    .sv { min-height: 0; }
+    .quiz-wrap { padding: 40px 22px; border-radius: 28px; }
+    .q-opts { grid-template-columns: 1fr; }
+    .q-title { font-size: 30px; }
+    .quote { flex-basis: 86%; }
+    .scores { gap: 22px; }
+    summary { font-size: 23px; }
+    details .ans { padding-right: 0; }
+    .contacts { grid-template-columns: 1fr; margin-top: 80px; }
+    .sheet { padding: 24px 18px; }
+    .bk-title { font-size: 32px; }
+    .times { grid-template-columns: repeat(3, 1fr); }
+    .gcard { padding: 22px; border-radius: 20px; }
+    .gcard .lg { font-size: 28px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    .rv { opacity: 1; transform: none; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a href="#" class="logo" aria-label="Тихо — на главную">
+      <svg class="logo-mark" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.3"><ellipse cx="16" cy="25" rx="11" ry="3.6"/><ellipse cx="16" cy="18" rx="8" ry="3"/><ellipse cx="16" cy="11.5" rx="5" ry="2.4"/><circle cx="16" cy="5.5" r="2" fill="currentColor" stroke="none"/></svg>
+      тихо
+    </a>
+    <nav class="menu">
+      <a href="#services">Услуги</a>
+      <a href="#quiz">Подбор</a>
+      <a href="#team">Мастера</a>
+      <a href="#gift">Сертификаты</a>
+      <a href="#reviews">Отзывы</a>
+      <a href="#contacts">Контакты</a>
+    </nav>
+    <div class="nav-right">
+      <a href="tel:+70000000000" class="nav-phone">+7 (000) 000-00-00</a>
+      <button class="btn btn-dark btn-sm" data-book>Записаться</button>
+      <button class="burger" id="burger" aria-label="Меню"><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#services">Услуги</a>
+  <a href="#quiz">Подбор массажа</a>
+  <a href="#team">Мастера</a>
+  <a href="#gift">Сертификаты</a>
+  <a href="#contacts">Контакты</a>
+  <button class="btn btn-dark" data-book>Записаться онлайн</button>
+</div>
+
+<!-- ПЕРВЫЙ ЭКРАН -->
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow fade-in">Студия массажа · с 2016 года</span>
+      <h1>
+        <span class="ln"><span>Час, когда</span></span>
+        <span class="ln"><span>можно <em>ничего</em></span></span>
+        <span class="ln"><span>не делать</span></span>
+      </h1>
+      <p class="lead fade-in">Тёплый свет, тишина и мастера с медицинским образованием. Снимаем напряжение, которое копилось месяцами, за один визит.</p>
+      <div class="actions fade-in">
+        <button class="btn btn-dark" data-book>Записаться онлайн <span class="arr">→</span></button>
+        <a href="#quiz" class="btn btn-line">Подобрать массаж</a>
+      </div>
+      <div class="hero-stats fade-in">
+        <div><b data-count="9">0</b><span>лет заботы</span></div>
+        <div><b data-count="18400">0</b><span>гостей</span></div>
+        <div><b data-count="12">0</b><span>видов массажа</span></div>
+      </div>
+    </div>
+
+    <div class="art fade-in" aria-hidden="true">
+      <div class="arch">
+        <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+        <svg class="sprig" viewBox="0 0 120 160" fill="none" stroke="#5f6b52" stroke-width="1.6" stroke-linecap="round">
+          <path d="M10 155 C 30 110, 55 70, 105 10"/>
+          <path d="M28 120 C 14 112, 8 98, 10 86 C 22 92, 30 104, 28 120Z" fill="#7c8a6c" fill-opacity=".55"/>
+          <path d="M38 102 C 52 100, 62 90, 64 78 C 50 78, 40 88, 38 102Z" fill="#7c8a6c" fill-opacity=".55"/>
+          <path d="M52 82 C 40 72, 38 58, 42 48 C 54 56, 58 68, 52 82Z" fill="#7c8a6c" fill-opacity=".55"/>
+          <path d="M66 64 C 80 64, 90 56, 94 44 C 80 42, 70 50, 66 64Z" fill="#7c8a6c" fill-opacity=".55"/>
+          <path d="M80 44 C 72 32, 74 20, 80 12 C 88 22, 88 34, 80 44Z" fill="#7c8a6c" fill-opacity=".55"/>
+        </svg>
+        <svg class="stones" viewBox="0 0 300 260">
+          <defs>
+            <radialGradient id="g1" cx="40%" cy="30%" r="80%"><stop offset="0" stop-color="#6d6458"/><stop offset="1" stop-color="#2f2a24"/></radialGradient>
+            <radialGradient id="g2" cx="40%" cy="30%" r="80%"><stop offset="0" stop-color="#8a7f71"/><stop offset="1" stop-color="#3d362e"/></radialGradient>
+            <radialGradient id="g3" cx="40%" cy="30%" r="80%"><stop offset="0" stop-color="#b3a593"/><stop offset="1" stop-color="#5b5145"/></radialGradient>
+            <radialGradient id="g4" cx="40%" cy="30%" r="80%"><stop offset="0" stop-color="#d8cbb8"/><stop offset="1" stop-color="#8a7c6a"/></radialGradient>
+          </defs>
+          <ellipse class="st" cx="150" cy="222" rx="128" ry="34" fill="url(#g1)"/>
+          <ellipse class="st" cx="150" cy="166" rx="98" ry="30" fill="url(#g2)"/>
+          <ellipse class="st" cx="152" cy="116" rx="70" ry="25" fill="url(#g3)"/>
+          <ellipse class="st" cx="150" cy="74" rx="44" ry="19" fill="url(#g4)"/>
+        </svg>
+      </div>
+      <div class="badge-round">
+        <svg class="ring" viewBox="0 0 150 150"><defs><path id="circ" d="M75,75 m-58,0 a58,58 0 1,1 116,0 a58,58 0 1,1 -116,0"/></defs><text font-family="Manrope" font-size="10.5" letter-spacing="3.3" fill="#857b6e"><textPath href="#circ">МАССАЖ · ТИШИНА · ЗАБОТА · ТЕПЛО · </textPath></text></svg>
+        <div class="yr">2016<small>с любовью</small></div>
+      </div>
+      <div class="rating-chip">
+        <b>4,9</b>
+        <div><div class="stars">★★★★★</div><small>612 отзывов<br>на Яндекс Картах</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span>Классический</span><span>Лечебный</span><span>Спортивный</span><span>Лимфодренаж</span><span>Стоун-терапия</span><span>Ароматерапия</span><span>Для двоих</span><span>Для будущих мам</span>
+    <span>Классический</span><span>Лечебный</span><span>Спортивный</span><span>Лимфодренаж</span><span>Стоун-терапия</span><span>Ароматерапия</span><span>Для двоих</span><span>Для будущих мам</span>
+  </div>
+</div>
+
+<!-- ФИЛОСОФИЯ -->
+<section class="sec" id="about">
+  <div class="wrap">
+    <div class="about-grid">
+      <div class="rv">
+        <span class="eyebrow">О студии</span>
+        <h2 class="title">Массаж — это <em>не роскошь,</em> а способ вернуть себя</h2>
+      </div>
+      <p class="lead rv d2">Мы не включаем бодрую музыку, не продаём косметику и не торопим. Каждый сеанс начинается с короткого разговора: мастер узнаёт, что беспокоит, и подбирает технику под вас, а не по шаблону.</p>
+    </div>
+    <div class="principles">
+      <div class="pr rv"><span class="num">01</span><h3>Мастера с медицинским образованием</h3><p>Все специалисты — массажисты с медицинским дипломом и опытом от 6 лет. Раз в год проходят обучение новым техникам.</p></div>
+      <div class="pr rv d1"><span class="num">02</span><h3>Полная тишина</h3><p>Звукоизолированные кабинеты, приглушённый свет и тёплые столы. Телефон можно оставить в ячейке у входа.</p></div>
+      <div class="pr rv d2"><span class="num">03</span><h3>Только натуральное</h3><p>Масла холодного отжима, свежее бельё на каждый сеанс и травяной чай после процедуры.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- УСЛУГИ -->
+<section class="sec services" id="services">
+  <div class="wrap">
+    <div class="sv-head">
+      <div class="rv">
+        <span class="eyebrow">Услуги и цены</span>
+        <h2 class="title">Выберите, <em>что нужно</em> телу</h2>
+      </div>
+      <div class="tabs rv d2" id="tabs" role="tablist"></div>
+    </div>
+    <div class="sv-grid" id="svGrid"></div>
+  </div>
+</section>
+
+<!-- ПОДБОР -->
+<section class="sec" id="quiz">
+  <div class="wrap">
+    <div class="quiz-wrap rv">
+      <div>
+        <span class="eyebrow">Подбор за 30 секунд</span>
+        <h2 class="title">Не знаете, <em>какой</em> массаж выбрать?</h2>
+        <p class="lead">Ответьте на три вопроса, и мы подскажем процедуру, которая подойдёт именно вам.</p>
+      </div>
+      <div class="quiz" id="quizBox"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ВИЗИТ -->
+<section class="sec" style="padding-top:20px">
+  <div class="wrap">
+    <div class="rv">
+      <span class="eyebrow">Как проходит визит</span>
+      <h2 class="title">Два часа <em>только для вас</em></h2>
+    </div>
+    <div class="steps">
+      <div class="step rv"><span class="t">За 10 минут</span><h3>Встреча</h3><p>Чай на травах, удобный халат и тапочки. Никаких очередей и спешки.</p></div>
+      <div class="step rv d1"><span class="t">5 минут</span><h3>Разговор</h3><p>Мастер узнаёт о самочувствии, противопоказаниях и о том, какое давление вам приятно.</p></div>
+      <div class="step rv d2"><span class="t">60–120 минут</span><h3>Сеанс</h3><p>Тёплый стол, масло на выбор и тишина. Можно просто уснуть, это нормально.</p></div>
+      <div class="step rv d3"><span class="t">После</span><h3>Отдых</h3><p>Ещё 15 минут в зоне отдыха и советы мастера: как сохранить эффект дома.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- МАСТЕРА -->
+<section class="sec" id="team" style="padding-top:60px">
+  <div class="wrap">
+    <div class="sv-head" style="margin-bottom:0">
+      <div class="rv">
+        <span class="eyebrow">Команда</span>
+        <h2 class="title">Руки, которым <em>доверяют</em></h2>
+      </div>
+      <p class="lead rv d2" style="max-width:380px">Четыре мастера, у каждого свой стиль. Если не знаете, к кому записаться, администратор подскажет.</p>
+    </div>
+    <div class="team">
+      <div class="m rv"><div class="ph" style="background:linear-gradient(160deg,#c9a985,#8f6a4c)"><span class="mono">А</span><span class="exp">12 лет опыта</span></div><h3>Анна Соколова</h3><p>Лечебный и классический массаж</p></div>
+      <div class="m rv d1"><div class="ph" style="background:linear-gradient(160deg,#a9b39a,#5f6b52)"><span class="mono">М</span><span class="exp">8 лет опыта</span></div><h3>Марина Белова</h3><p>Лимфодренаж, массаж лица</p></div>
+      <div class="m rv d2"><div class="ph" style="background:linear-gradient(160deg,#8b8076,#3d362e)"><span class="mono">И</span><span class="exp">10 лет опыта</span></div><h3>Игорь Орлов</h3><p>Спортивный и глубокотканный</p></div>
+      <div class="m rv d3"><div class="ph" style="background:linear-gradient(160deg,#d9b9a0,#a8694c)"><span class="mono">Е</span><span class="exp">6 лет опыта</span></div><h3>Елена Ким</h3><p>Стоун-терапия, для будущих мам</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- СЕРТИФИКАТ -->
+<section class="sec" id="gift" style="padding-top:40px">
+  <div class="wrap gift-grid">
+    <div class="card3d rv">
+      <div class="gcard" id="gcard">
+        <div class="shine"></div>
+        <div class="top"><div class="lg">тихо</div><div class="lb">Подарочный<br>сертификат</div></div>
+        <div class="amount"><span id="gAmount">5 000</span><small>₽</small></div>
+        <div class="foot"><span>№ 0418 · действует 6 месяцев</span><span>ТИХО.РФ</span></div>
+      </div>
+    </div>
+    <div class="rv d2">
+      <span class="eyebrow">Подарок, который запомнят</span>
+      <h2 class="title">Подарите <em>час тишины</em></h2>
+      <div class="amounts" id="amounts"></div>
+      <ul class="ticks">
+        <li>Красивая открытка в конверте или электронная версия за 5 минут</li>
+        <li>Можно потратить на любую процедуру и любого мастера</li>
+        <li>Действует 6 месяцев с даты покупки</li>
+      </ul>
+      <button class="btn btn-dark" id="giftBtn">Оформить сертификат <span class="arr">→</span></button>
+    </div>
+  </div>
+</section>
+
+<!-- ОТЗЫВЫ -->
+<section class="sec reviews" id="reviews">
+  <div class="wrap">
+    <div class="rv-top">
+      <div class="rv">
+        <span class="eyebrow">Отзывы</span>
+        <h2 class="title">Говорят <em>гости</em></h2>
+      </div>
+      <div class="scores rv d2">
+        <div class="score"><b>4,9</b><span>Яндекс Карты · 612</span></div>
+        <div class="score"><b>5,0</b><span>2ГИС · 348</span></div>
+      </div>
+    </div>
+    <div class="slider rv">
+      <div class="slides" id="slides">
+        <div class="quote"><div class="mark">“</div><p>Пришла с болью в шее после года за ноутбуком. После третьего сеанса у Анны забыла, что такое таблетки от головы.</p><div class="who"><div class="av" style="background:#a8694c">О</div><div><b>Ольга</b><small>Лечебный массаж · курс</small></div></div></div>
+        <div class="quote"><div class="mark">“</div><p>Самое тихое место в городе. Уснул на втором часу стоун-терапии и проснулся другим человеком.</p><div class="who"><div class="av" style="background:#5f6b52">Д</div><div><b>Дмитрий</b><small>Стоун-терапия</small></div></div></div>
+        <div class="quote"><div class="mark">“</div><p>Подарила мужу сертификат «Для двоих» на годовщину. Теперь это наша традиция каждые полгода.</p><div class="who"><div class="av" style="background:#8f6a4c">Е</div><div><b>Екатерина</b><small>Ритуал «Для двоих»</small></div></div></div>
+        <div class="quote"><div class="mark">“</div><p>Хожу к Игорю после соревнований. Восстанавливаюсь в два раза быстрее, ноги просто летают.</p><div class="who"><div class="av" style="background:#3d362e">С</div><div><b>Сергей</b><small>Спортивный массаж</small></div></div></div>
+        <div class="quote"><div class="mark">“</div><p>На седьмом месяце было очень страшно идти на массаж, но Елена всё объяснила и сделала невероятно бережно.</p><div class="who"><div class="av" style="background:#c9a985">А</div><div><b>Алина</b><small>Для будущих мам</small></div></div></div>
+      </div>
+      <div class="arrows" style="margin-top:34px">
+        <button class="arrow" id="prev" aria-label="Назад">←</button>
+        <button class="arrow" id="next" aria-label="Вперёд">→</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ВОПРОСЫ -->
+<section class="sec" id="faq">
+  <div class="wrap faq-grid">
+    <div class="rv">
+      <span class="eyebrow">Вопросы</span>
+      <h2 class="title">Частые <em>вопросы</em></h2>
+    </div>
+    <div class="rv d2">
+      <details open><summary>Больно ли будет?<span class="pm"></span></summary><div class="ans">Нет, если вы этого не хотите. Перед сеансом мастер спросит, какое давление вам приятно, и будет уточнять по ходу. Лечебный массаж может быть ощутимым, но всегда в комфортных пределах.</div></details>
+      <details><summary>Есть ли противопоказания?<span class="pm"></span></summary><div class="ans">Да: высокая температура, острые воспаления, кожные заболевания в зоне массажа, некоторые болезни сердца и сосудов. Если сомневаетесь, напишите нам, и мастер проконсультирует бесплатно.</div></details>
+      <details><summary>Что взять с собой?<span class="pm"></span></summary><div class="ans">Ничего. Халат, тапочки, одноразовое бельё, полотенца и средства для душа есть в студии.</div></details>
+      <details><summary>Можно ли отменить запись?<span class="pm"></span></summary><div class="ans">Конечно. Предупредите нас за 3 часа, и мы бесплатно перенесём или отменим визит.</div></details>
+      <details><summary>Есть ли скидки?<span class="pm"></span></summary><div class="ans">Скидка 15% на первый визит, курсы из 5 и 10 сеансов выгоднее до 20%, а в день рождения массаж в подарок при покупке курса.</div></details>
+    </div>
+  </div>
+</section>
+
+<!-- КОНТАКТЫ -->
+<section class="cta" id="contacts">
+  <div class="wrap">
+    <h2 class="big rv">Пора<br>немного <em>отдохнуть</em></h2>
+    <div class="center rv d2"><button class="btn btn-light" data-book>Записаться онлайн <span class="arr">→</span></button></div>
+    <div class="contacts">
+      <div><div class="lb">Адрес</div><div class="v">ул. Садовая, 12<br>2 этаж, вход со двора</div></div>
+      <div><div class="lb">Телефон</div><a class="v" href="tel:+70000000000">+7 (000) 000-00-00</a></div>
+      <div><div class="lb">Часы работы</div><div class="v">Ежедневно<br>10:00 – 22:00</div></div>
+      <div><div class="lb">Мы в сети</div><div class="v"><a href="#">Telegram</a> · <a href="#">ВКонтакте</a></div></div>
+    </div>
+    <div class="foot">
+      <div class="logo">тихо</div>
+      <div>Пример сайта. Студия, мастера, отзывы и контакты вымышлены.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ОКНО ЗАПИСИ -->
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Онлайн-запись">
+  <div class="bg" data-close></div>
+  <div class="sheet">
+    <div class="sheet-top">
+      <span class="eyebrow">Онлайн-запись</span>
+      <button class="close" data-close aria-label="Закрыть">✕</button>
+    </div>
+    <div class="bk-steps" id="bkSteps"></div>
+    <div id="bkBody"></div>
+    <div class="sheet-foot" id="bkFoot"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  // ---------- Данные ----------
+  var CATS = [
+    ['relax', 'Расслабление'],
+    ['back', 'Спина и здоровье'],
+    ['body', 'Фигура'],
+    ['spa', 'SPA-ритуалы']
+  ];
+  var ICONS = {
+    relax: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 21c-4-3-7-6-7-10a7 7 0 0 1 14 0c0 4-3 7-7 10z"/><path d="M12 21V9"/></svg>',
+    back: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 3v18"/><path d="M8 6h8M7 10h10M8 14h8M9 18h6"/></svg>',
+    body: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 12c3-6 6 6 9 0s6 6 9 0"/></svg>',
+    spa: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><ellipse cx="12" cy="18" rx="8" ry="2.5"/><ellipse cx="12" cy="13" rx="5.5" ry="2"/><ellipse cx="12" cy="8.5" rx="3.5" ry="1.6"/></svg>'
+  };
+  var SERVICES = [
+    { id: 'classic', cat: 'relax', name: 'Классический', desc: 'Мягкий расслабляющий массаж всего тела. Лучший выбор для первого визита.', opts: [['60 мин', 3500], ['90 мин', 5000]], tag: 'Хит' },
+    { id: 'aroma', cat: 'relax', name: 'Ароматерапия', desc: 'Медленный массаж с эфирными маслами, которые вы выберете сами.', opts: [['60 мин', 3900], ['90 мин', 5400]] },
+    { id: 'stone', cat: 'relax', name: 'Стоун-терапия', desc: 'Тёплые базальтовые камни прогревают мышцы глубже, чем руки.', opts: [['90 мин', 6200], ['120 мин', 7900]] },
+    { id: 'neck', cat: 'back', name: 'Спина и шея', desc: 'Для тех, кто много сидит за компьютером. Снимает зажимы и головную боль.', opts: [['30 мин', 1900], ['60 мин', 3200]], tag: 'Хит' },
+    { id: 'medical', cat: 'back', name: 'Лечебный', desc: 'При остеохондрозе, сколиозе и болях в пояснице. Лучше курсом из 5–10 сеансов.', opts: [['60 мин', 4200], ['90 мин', 5800]] },
+    { id: 'sport', cat: 'back', name: 'Спортивный', desc: 'Глубокая проработка мышц до и после нагрузок, ускоряет восстановление.', opts: [['60 мин', 3900], ['90 мин', 5500]] },
+    { id: 'lymph', cat: 'body', name: 'Лимфодренаж', desc: 'Убирает отёки и тяжесть в ногах, дарит лёгкость уже после первого раза.', opts: [['60 мин', 3800], ['90 мин', 5300]] },
+    { id: 'cellulite', cat: 'body', name: 'Антицеллюлитный', desc: 'Интенсивный массаж проблемных зон. Видимый результат за курс.', opts: [['60 мин', 3600], ['курс 10', 30000]] },
+    { id: 'face', cat: 'body', name: 'Массаж лица', desc: 'Скульптурирующая техника: чёткий овал и свежий цвет лица.', opts: [['45 мин', 3200], ['60 мин', 3900]] },
+    { id: 'evening', cat: 'spa', name: 'Тихий вечер', desc: 'Скраб, массаж с тёплым маслом, обёртывание и чайная церемония.', opts: [['120 мин', 8900]], tag: 'Ритуал' },
+    { id: 'couple', cat: 'spa', name: 'Для двоих', desc: 'Два мастера, один кабинет, синхронный массаж и игристое после.', opts: [['90 мин', 11000], ['120 мин', 14000]] },
+    { id: 'mama', cat: 'spa', name: 'Для будущих мам', desc: 'Бережный массаж со 2 триместра на специальных подушках.', opts: [['60 мин', 3900], ['90 мин', 5400]] }
+  ];
+  var MASTERS = [
+    ['any', 'Любой мастер', 'Подберём свободного специалиста'],
+    ['anna', 'Анна Соколова', 'Лечебный, классический · 12 лет'],
+    ['marina', 'Марина Белова', 'Лимфодренаж, лицо · 8 лет'],
+    ['igor', 'Игорь Орлов', 'Спортивный, глубокий · 10 лет'],
+    ['elena', 'Елена Ким', 'Стоун, для мам · 6 лет']
+  ];
+  function rub(n) { return n.toLocaleString('ru-RU').replace(/ /g, ' ') + ' ₽'; }
+  function byId(id) { return SERVICES.find(function (s) { return s.id === id; }); }
+
+  // ---------- Шапка, прогресс, меню ----------
+  var nav = document.getElementById('nav');
+  var progress = document.getElementById('progress');
+  function onScroll() {
+    var y = window.scrollY;
+    nav.classList.toggle('scrolled', y > 30);
+    var h = document.documentElement.scrollHeight - innerHeight;
+    progress.style.width = (h > 0 ? y / h * 100 : 0) + '%';
+  }
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  document.getElementById('burger').addEventListener('click', function () {
+    document.body.classList.toggle('menu-open');
+    document.body.classList.toggle('lock', document.body.classList.contains('menu-open'));
+  });
+  document.querySelectorAll('#mobileMenu a, #mobileMenu button').forEach(function (a) {
+    a.addEventListener('click', function () { document.body.classList.remove('menu-open', 'lock'); });
+  });
+
+  // ---------- Появление и счётчики ----------
+  function countUp(el) {
+    var end = +el.dataset.count, t0 = null;
+    function step(t) {
+      t0 = t0 || t; var p = Math.min((t - t0) / 1800, 1);
+      el.textContent = Math.round(end * (1 - Math.pow(1 - p, 3))).toLocaleString('ru-RU').replace(/ /g, ' ');
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: .12, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.rv').forEach(function (el) { io.observe(el); });
+  } else {
+    document.querySelectorAll('.rv').forEach(function (el) { el.classList.add('in'); });
+  }
+  setTimeout(function () { document.querySelectorAll('[data-count]').forEach(countUp); }, 700);
+
+  // ---------- Услуги ----------
+  var curCat = 'relax';
+  var tabs = document.getElementById('tabs');
+  tabs.innerHTML = CATS.map(function (c) { return '<button class="tab" role="tab" data-cat="' + c[0] + '">' + c[1] + '</button>'; }).join('');
+  tabs.addEventListener('click', function (e) { var c = e.target.dataset.cat; if (c) { curCat = c; renderServices(); } });
+  var picked = {};
+  function renderServices() {
+    tabs.querySelectorAll('.tab').forEach(function (t) { t.classList.toggle('on', t.dataset.cat === curCat); t.setAttribute('aria-selected', t.dataset.cat === curCat); });
+    document.getElementById('svGrid').innerHTML = SERVICES.filter(function (s) { return s.cat === curCat; }).map(function (s) {
+      var k = picked[s.id] || 0;
+      return '<article class="sv" data-id="' + s.id + '">' + (s.tag ? '<span class="tag">' + s.tag + '</span>' : '') +
+        '<div class="ico">' + ICONS[s.cat] + '</div><h3>' + s.name + '</h3><p>' + s.desc + '</p>' +
+        '<div class="opts">' + s.opts.map(function (o, i) { return '<button class="opt' + (i === k ? ' on' : '') + '" data-opt="' + i + '">' + o[0] + '</button>'; }).join('') + '</div>' +
+        '<div class="bottom"><div class="price">' + rub(s.opts[k][1]).replace(' ₽', '') + '<small>₽</small></div>' +
+        '<button class="round-btn" data-go aria-label="Записаться на ' + s.name + '"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 14L14 4M6 4h8v8"/></svg></button></div></article>';
+    }).join('');
+  }
+  document.getElementById('svGrid').addEventListener('click', function (e) {
+    var card = e.target.closest('.sv'); if (!card) return;
+    var id = card.dataset.id;
+    var opt = e.target.closest('[data-opt]');
+    if (opt) {
+      picked[id] = +opt.dataset.opt;
+      card.querySelectorAll('.opt').forEach(function (b, i) { b.classList.toggle('on', i === picked[id]); });
+      var price = byId(id).opts[picked[id]][1];
+      card.querySelector('.price').innerHTML = rub(price).replace(' ₽', '') + '<small>₽</small>';
+      return;
+    }
+    if (e.target.closest('[data-go]')) openBooking({ service: id, opt: picked[id] || 0 });
+  });
+  renderServices();
+
+  // ---------- Подбор массажа ----------
+  var QUIZ = [
+    { q: 'Чего хочется больше всего?', a: [['Расслабиться и выспаться', 'relax'], ['Убрать боль в спине или шее', 'back'], ['Подтянуть фигуру, убрать отёки', 'body'], ['Сделать подарок', 'gift']] },
+    { q: 'Как часто вы бываете на массаже?', a: [['Ни разу не был(а)', 'first'], ['Иногда', 'some'], ['Регулярно', 'often'], ['Раньше ходил(а), давно не был(а)', 'some']] },
+    { q: 'Сколько времени готовы себе подарить?', a: [['Около часа', 60], ['Полтора часа', 90], ['Целый вечер', 120], ['Хватит и 30 минут', 30]] }
+  ];
+  var RESULT = {
+    relax: { 30: ['classic', 0], 60: ['classic', 0], 90: ['aroma', 1], 120: ['evening', 0] },
+    back: { 30: ['neck', 0], 60: ['neck', 1], 90: ['medical', 1], 120: ['medical', 1] },
+    body: { 30: ['face', 0], 60: ['lymph', 0], 90: ['lymph', 1], 120: ['cellulite', 1] }
+  };
+  var answers = [];
+  var quizBox = document.getElementById('quizBox');
+  function renderQuiz() {
+    var step = answers.length;
+    var bars = '<div class="q-steps">' + QUIZ.map(function (_, i) { return '<i class="' + (i < step || step >= QUIZ.length ? 'on' : '') + '"></i>'; }).join('') + '</div>';
+    if (answers[0] === 'gift') {
+      quizBox.innerHTML = bars + '<div class="q-result q-anim"><span class="eyebrow">Наш совет</span><h3>Подарочный сертификат</h3><p>Человек сам выберет процедуру и удобное время. Красивая открытка в конверте или электронная версия за 5 минут.</p><div class="row"><a href="#gift" class="btn btn-dark">Выбрать сумму →</a></div></div><button class="q-back" data-restart>Пройти заново</button>';
+      return;
+    }
+    if (step < QUIZ.length) {
+      var q = QUIZ[step];
+      quizBox.innerHTML = bars + '<div class="q-anim"><div class="q-title">' + q.q + '</div><div class="q-opts">' +
+        q.a.map(function (a, i) { return '<button class="q-opt" data-a="' + i + '">' + a[0] + '<span class="k">' + (i + 1) + '</span></button>'; }).join('') +
+        '</div></div>' + (step ? '<button class="q-back" data-back>← Назад</button>' : '');
+      return;
+    }
+    var r = RESULT[answers[0]][answers[2]];
+    var s = byId(r[0]), o = s.opts[r[1]];
+    var first = answers[1] === 'first';
+    quizBox.innerHTML = bars + '<div class="q-result q-anim"><span class="eyebrow">Вам подойдёт</span><h3>' + s.name + '</h3><p>' + s.desc + '</p>' +
+      (first ? '<div class="gift">Первый визит со скидкой 15%: <b>' + rub(Math.round(o[1] * .85 / 10) * 10) + '</b> вместо ' + rub(o[1]) + '</div>' : '') +
+      '<div class="row"><button class="btn btn-dark" data-qbook>Записаться · ' + o[0] + ' →</button>' + (first ? '' : '<span style="font-family:var(--serif);font-size:28px">' + rub(o[1]) + '</span>') + '</div></div>' +
+      '<button class="q-back" data-restart>Пройти заново</button>';
+    quizBox.querySelector('[data-qbook]').addEventListener('click', function () { openBooking({ service: s.id, opt: r[1] }); });
+  }
+  quizBox.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-a]');
+    if (b) { answers.push(QUIZ[answers.length].a[+b.dataset.a][1]); renderQuiz(); return; }
+    if (e.target.closest('[data-back]')) { answers.pop(); renderQuiz(); }
+    if (e.target.closest('[data-restart]')) { answers = []; renderQuiz(); }
+  });
+  renderQuiz();
+
+  // ---------- Сертификат ----------
+  var AMOUNTS = [3000, 5000, 10000, 15000];
+  var gift = 5000;
+  var amountsBox = document.getElementById('amounts');
+  function renderAmounts() {
+    amountsBox.innerHTML = AMOUNTS.map(function (a) { return '<button class="amt' + (a === gift ? ' on' : '') + '" data-amt="' + a + '">' + rub(a) + '</button>'; }).join('');
+    document.getElementById('gAmount').textContent = gift.toLocaleString('ru-RU').replace(/ /g, ' ');
+  }
+  amountsBox.addEventListener('click', function (e) { var a = e.target.dataset.amt; if (a) { gift = +a; renderAmounts(); } });
+  renderAmounts();
+  document.getElementById('giftBtn').addEventListener('click', function () { openBooking({ gift: gift }); });
+  var gcard = document.getElementById('gcard');
+  if (matchMedia('(hover: hover)').matches) {
+    gcard.addEventListener('mousemove', function (e) {
+      var r = gcard.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+      gcard.style.transform = 'rotateY(' + (x - .5) * 14 + 'deg) rotateX(' + (.5 - y) * 12 + 'deg)';
+      gcard.style.setProperty('--mx', x * 100 + '%'); gcard.style.setProperty('--my', y * 100 + '%');
+    });
+    gcard.addEventListener('mouseleave', function () { gcard.style.transform = ''; });
+  }
+
+  // ---------- Отзывы ----------
+  var slides = document.getElementById('slides');
+  function slideBy(dir) { var q = slides.querySelector('.quote'); slides.scrollBy({ left: dir * (q.offsetWidth + 22), behavior: 'smooth' }); }
+  document.getElementById('prev').addEventListener('click', function () { slideBy(-1); });
+  document.getElementById('next').addEventListener('click', function () { slideBy(1); });
+
+  // ---------- Запись ----------
+  var modal = document.getElementById('modal');
+  var bk = {};
+  var DAYS = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+  var MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+  var TIMES = ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00'];
+
+  var lastFocus = null;
+  function openBooking(pre) {
+    pre = pre || {};
+    lastFocus = document.activeElement;
+    bk = { step: 0, service: pre.service || null, opt: pre.opt || 0, master: 'any', day: null, time: null, gift: pre.gift || null, name: '', phone: '', comment: '' };
+    if (bk.gift) bk.step = 3; else if (bk.service) bk.step = 1;
+    modal.classList.add('open'); document.body.classList.add('lock');
+    renderBooking();
+    setTimeout(function () { modal.querySelector('.close').focus(); }, 50);
+  }
+  function closeBooking() {
+    modal.classList.remove('open'); document.body.classList.remove('lock');
+    if (lastFocus && document.contains(lastFocus) && lastFocus.offsetParent !== null) lastFocus.focus();
+  }
+  document.querySelectorAll('[data-book]').forEach(function (b) { b.addEventListener('click', function () { openBooking(); }); });
+  modal.addEventListener('click', function (e) { if (e.target.closest('[data-close]')) closeBooking(); });
+  addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      if (modal.classList.contains('open')) closeBooking();
+      else if (document.body.classList.contains('menu-open')) { document.body.classList.remove('menu-open', 'lock'); document.getElementById('burger').focus(); }
+      return;
+    }
+    // Tab не выходит за пределы окна записи
+    if (e.key === 'Tab' && modal.classList.contains('open')) {
+      var f = [].filter.call(modal.querySelectorAll('button, input, textarea, a[href]'), function (el) { return !el.disabled && el.offsetParent !== null; });
+      if (!f.length) return;
+      var first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && (document.activeElement === first || !modal.contains(document.activeElement))) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && (document.activeElement === last || !modal.contains(document.activeElement))) { e.preventDefault(); first.focus(); }
+    }
+  });
+
+  function dayList() {
+    var out = [], d = new Date(); d.setHours(0, 0, 0, 0);
+    for (var i = 0; i < 10; i++) { var x = new Date(d); x.setDate(d.getDate() + i); out.push(x); }
+    return out;
+  }
+  function busy(day, t) { // «занятые» слоты для правдоподобия
+    var now = new Date();
+    if (day.toDateString() === now.toDateString() && parseInt(t) <= now.getHours()) return true;
+    return ((day.getDate() * 7 + parseInt(t) * 3) % 5) === 0;
+  }
+  function dayLabel(d) { return DAYS[d.getDay()] + ', ' + d.getDate() + ' ' + MONTHS[d.getMonth()]; }
+
+  function renderBooking() {
+    var total = bk.gift ? 1 : 4;
+    var idx = bk.gift ? 0 : bk.step;
+    document.getElementById('bkSteps').innerHTML = bk.step === 4 ? '' : Array.apply(null, Array(total)).map(function (_, i) { return '<i class="' + (i <= idx ? 'on' : '') + '"></i>'; }).join('');
+    var body = document.getElementById('bkBody'), foot = document.getElementById('bkFoot');
+    var html = '', next = false, nextLabel = 'Далее →';
+
+    if (bk.step === 0) {
+      html = '<div class="bk-title">Какой массаж?</div><div class="bk-sub">Выберите процедуру. Длительность уточним на следующем шаге.</div><div class="pick">' +
+        CATS.map(function (c) {
+          return '<div class="grp">' + c[1] + '</div>' + SERVICES.filter(function (s) { return s.cat === c[0]; }).map(function (s) {
+            return '<button data-svc="' + s.id + '" class="' + (bk.service === s.id ? 'on' : '') + '"><span><b>' + s.name + '</b><small>' + s.opts.map(function (o) { return o[0]; }).join(' / ') + '</small></span><span class="pr2">от ' + rub(s.opts[0][1]) + '</span></button>';
+          }).join('');
+        }).join('') + '</div>';
+      next = !!bk.service;
+    } else if (bk.step === 1) {
+      var s = byId(bk.service);
+      html = '<div class="bk-title">' + s.name + '</div><div class="bk-sub">Выберите длительность и мастера.</div><div class="pick">' +
+        s.opts.map(function (o, i) { return '<button data-optb="' + i + '" class="' + (bk.opt === i ? 'on' : '') + '"><b>' + o[0] + '</b><span class="pr2">' + rub(o[1]) + '</span></button>'; }).join('') +
+        '<div class="grp">Мастер</div>' +
+        MASTERS.map(function (m) { return '<button data-master="' + m[0] + '" class="' + (bk.master === m[0] ? 'on' : '') + '"><span><b>' + m[1] + '</b><small>' + m[2] + '</small></span></button>'; }).join('') + '</div>';
+      next = true;
+    } else if (bk.step === 2) {
+      var days = dayList();
+      html = '<div class="bk-title">Когда удобно?</div><div class="bk-sub">Зачёркнутое время уже занято.</div><div class="days">' +
+        days.map(function (d, i) { return '<button data-day="' + i + '" class="' + (bk.day === i ? 'on' : '') + '"><small>' + (i === 0 ? 'Сегодня' : DAYS[d.getDay()]) + '</small><b>' + d.getDate() + '</b></button>'; }).join('') + '</div>';
+      if (bk.day !== null) {
+        var day = days[bk.day];
+        html += '<div class="times">' + TIMES.map(function (t) { var b = busy(day, t); return '<button data-time="' + t + '" ' + (b ? 'disabled' : '') + ' class="' + (bk.time === t ? 'on' : '') + '">' + t + '</button>'; }).join('') + '</div>';
+      }
+      next = bk.day !== null && !!bk.time;
+    } else if (bk.step === 3) {
+      html = '<div class="bk-title">' + (bk.gift ? 'Сертификат на ' + rub(bk.gift) : 'Почти готово') + '</div><div class="bk-sub">' + (bk.gift ? 'Оставьте контакты, и администратор оформит сертификат и пришлёт его вам.' : 'Проверьте запись и оставьте контакты.') + '</div>';
+      if (!bk.gift) {
+        var sv = byId(bk.service), op = sv.opts[bk.opt], ms = MASTERS.find(function (m) { return m[0] === bk.master; });
+        html += '<div class="summary"><div><span>Процедура</span><b>' + sv.name + ', ' + op[0] + '</b></div><div><span>Мастер</span><b>' + ms[1] + '</b></div><div><span>Дата</span><b>' + dayLabel(dayList()[bk.day]) + ', ' + bk.time + '</b></div><div><span>Стоимость</span><b>' + rub(op[1]) + '</b></div></div>';
+      }
+      html += '<div class="field"><label for="bkName">Ваше имя</label><input id="bkName" autocomplete="name" value="' + bk.name.replace(/"/g, '&quot;') + '" placeholder="Как к вам обращаться"></div>' +
+        '<div class="field"><label for="bkPhone">Телефон</label><input id="bkPhone" type="tel" inputmode="tel" autocomplete="tel" value="' + bk.phone + '" placeholder="+7 (___) ___-__-__"></div>' +
+        '<div class="field"><label for="bkComment">Пожелания</label><textarea id="bkComment" rows="2" placeholder="Например: болит поясница, люблю сильное давление">' + bk.comment.replace(/</g, '&lt;') + '</textarea></div>' +
+        '<p class="note-small">Это демонстрационный сайт: заявка никуда не отправляется.</p>';
+      next = bk.name.trim().length > 1 && bk.phone.replace(/\D/g, '').length === 11;
+      nextLabel = bk.gift ? 'Оформить сертификат' : 'Записаться';
+    } else {
+      var who = bk.name.trim().split(' ')[0];
+      html = '<div class="done"><div class="ok"><svg width="44" height="44" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 23l7 7 14-15"/></svg></div>' +
+        '<div class="bk-title">Спасибо, ' + who.replace(/</g, '&lt;') + '!</div><p class="bk-sub" style="max-width:360px;margin:12px auto 0">' +
+        (bk.gift ? 'Администратор свяжется с вами в течение 15 минут, чтобы оформить сертификат.' : 'Ждём вас ' + dayLabel(dayList()[bk.day]) + ' в ' + bk.time + '. Накануне пришлём напоминание.') + '</p></div>';
+    }
+    body.innerHTML = html;
+    body.scrollTop = 0;
+    if (bk.step === 4) {
+      foot.innerHTML = '<button class="btn btn-dark" data-close>Готово</button>';
+    } else {
+      var canBack = bk.step > 0 && !bk.gift;
+      foot.innerHTML = (canBack ? '<button class="btn btn-line" data-back style="flex:0 0 auto">←</button>' : '') +
+        '<button class="btn btn-dark" data-next ' + (next ? '' : 'disabled') + '>' + nextLabel + '</button>';
+    }
+    if (bk.step === 3) {
+      var ph = document.getElementById('bkPhone');
+      ['bkName', 'bkComment'].forEach(function (id) {
+        document.getElementById(id).addEventListener('input', function (e) { bk[id === 'bkName' ? 'name' : 'comment'] = e.target.value; updateNext(); });
+      });
+      ph.addEventListener('input', function () { ph.value = maskPhone(ph.value); bk.phone = ph.value; updateNext(); });
+      ph.addEventListener('focus', function () { if (!ph.value) ph.value = '+7 ('; });
+    }
+  }
+  function updateNext() {
+    var ok = bk.name.trim().length > 1 && bk.phone.replace(/\D/g, '').length === 11;
+    var b = document.querySelector('#bkFoot [data-next]'); if (b) b.disabled = !ok;
+  }
+  // Маска +7 (XXX) XXX-XX-XX. n — номер без кода страны (10 цифр)
+  function maskPhone(v) {
+    var d = v.replace(/\D/g, '');
+    if (!d) return '';
+    var n = /^\s*\+7/.test(v) ? d.slice(1) : d;
+    // набрали или вставили номер целиком с 8 или 7 в начале
+    if (n.length === 11 && (n[0] === '8' || n[0] === '7')) n = n.slice(1);
+    n = n.slice(0, 10);
+    if (!n) return v.length < 4 ? '' : '+7 (';
+    var r = '+7 (' + n.slice(0, 3);
+    if (n.length > 3) r += ') ' + n.slice(3, 6);
+    if (n.length > 6) r += '-' + n.slice(6, 8);
+    if (n.length > 8) r += '-' + n.slice(8, 10);
+    return r;
+  }
+  modal.addEventListener('click', function (e) {
+    var t = e.target.closest('button'); if (!t) return;
+    if (t.dataset.svc) { bk.service = t.dataset.svc; bk.opt = 0; bk.step = 1; return renderBooking(); }
+    if (t.dataset.optb) { bk.opt = +t.dataset.optb; return renderBooking(); }
+    if (t.dataset.master) { bk.master = t.dataset.master; return renderBooking(); }
+    if (t.dataset.day) { bk.day = +t.dataset.day; if (bk.time && busy(dayList()[bk.day], bk.time)) bk.time = null; return renderBooking(); }
+    if (t.dataset.time) { bk.time = t.dataset.time; return renderBooking(); }
+    if (t.hasAttribute('data-next')) { bk.step++; return renderBooking(); }
+    if (t.hasAttribute('data-back')) { bk.step--; return renderBooking(); }
+  });
+})();
+</script>
+</body>
+</html>
